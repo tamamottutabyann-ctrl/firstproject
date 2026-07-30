@@ -1,0 +1,11 @@
+lobal:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'target_app_server'
+    static_configs:
+      - targets: [{% for host in groups['target_servers'] %}'{{ hostvars[host]['ansible_host'] | default(host) }}:9100'{% if not loop.last %}, {% endif %}{% endfor %}]

@@ -1,0 +1,95 @@
+- name: Update repositories cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Create prometheus system group
+  ansible.builtin.group:
+    name: prometheus
+    system: yes
+
+- name: Create prometheus system user
+  ansible.builtin.user:
+    name: prometheus
+    shell: /sbin/nologin
+    group: prometheus
+    system: yes
+    create_home: no
+
+- name: Create Prometheus config directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+  loop:
+    - /var/lib/prometheus
+    - /etc/prometheus
+
+- name: Download and extract Prometheus
+  ansible.builtin.unarchive:
+    src: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+    dest: /tmp/
+    remote_src: yes
+ 
+
+- name: Move Prometheus binaries to /usr/local/bin
+  ansible.builtin.copy:
+    src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: '0755'
+    owner: prometheus
+    group: prometheus
+    remote_src: yes
+  loop:
+    - prometheus
+    - promtool
+
+- name: Move Prometheus binaries to /usr/local/bin
+  ansible.builtin.copy:
+    src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64/prometheus.yml"
+    dest: "/etc/prometheus/prometheus.yml"
+    owner: prometheus
+    group: prometheus
+    remote_src: yes
+
+- name: Create Prometheus systemd service file
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/prometheus.service
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Prometheus Monitoring
+      Wants=network-online.target
+      After=network-online.target
+
+      [Service]
+      User=prometheus
+      Group=prometheus
+      Type=simple
+      ExecStart=/usr/local/bin/prometheus \
+        --config.file /etc/prometheus/prometheus.yml \
+        --storage.tsdb.path /var/lib/prometheus/ \
+        --web.console.templates=/etc/prometheus/consoles \
+        --web.console.libraries=/etc/prometheus/console_libraries
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Enable and start Prometheus service
+  ansible.builtin.systemd:
+    name: prometheus
+    enabled: yes
+    state: started
+
+- name: Allow all access to tcp port 9090
+  ufw:
+    rule: allow
+    port: '9090'
+    proto: tcp

@@ -1,0 +1,5 @@
+/Users/hansaime17/Desktop/docker-ansibleexercices /book-api/src/main/java/com/yannttb/bookapi/BookApiApplication.java
+/Users/hansaime17/Desktop/docker-ansibleexercices /book-api/src/main/java/com/yannttb/bookapi/controller/BookController.java
+/Users/hansaime17/Desktop/docker-ansibleexercices /book-api/src/main/java/com/yannttb/bookapi/model/Book.java
+/Users/hansaime17/Desktop/docker-ansibleexercices /book-api/src/main/java/com/yannttb/bookapi/repository/BookRepository.java
+/Users/hansaime17/Desktop/docker-ansibleexercices /book-api/src/main/java/com/yannttb/bookapi/service/BookService.java

@@ -1,0 +1,5 @@
+com/yannttb/bookapi/controller/BookController.class
+com/yannttb/bookapi/model/Book.class
+com/yannttb/bookapi/service/BookService.class
+com/yannttb/bookapi/repository/BookRepository.class
+com/yannttb/bookapi/BookApiApplication.class
