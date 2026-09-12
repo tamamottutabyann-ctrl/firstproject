@@ -1,11 +1,31 @@
-- name:  install and configure promotheus and grafana
+- name:  install and configure docker
   hosts : all
-  remote_user:
-  
-  
-  tasks:
-    - name : install docker 
+  remote_user: ansible
+  vars :
+    prometheus : "yes"
+    grafana : "yes"
+    caddy : "yes"
+
+- name:  install and configure prometheus    
+  hosts:  
+    - name : install prometheus 
       become: yes
       import_role: 
-          name: "setup/docker"
-  
+         name: "setup/prometheus" 
+      when: prometheus == "yes"        
+
+- name:  install and configure  grafana   
+  hosts:  
+    - name : install grafana
+      become: yes
+      import_role: 
+          name: "setup/grafana"
+      when: grafana == "yes"
+
+- name:  install and configure caddy
+  hosts:  
+    - name : install caddy
+      become: yes
+      import_role: 
+          name: "setup/caddy"
+      when: caddy == "yes"

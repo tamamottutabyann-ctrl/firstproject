@@ -1,0 +1,11 @@
+
+  tasks:
+    - name : install docker 
+      become: yes
+      import_role: 
+          name: "setup/docker"
+    
+    - name : install docker_container 
+      become: yes
+      import_role: 
+          name: "setup/docker_container"
