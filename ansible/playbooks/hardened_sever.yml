@@ -1,0 +1,10 @@
+- name:  harden the server and set default_user
+  hosts : all
+  remote_user:
+  
+  
+  tasks:
+    - name : install docker 
+      become: yes
+      import_role: 
+          name: "setup/docker"

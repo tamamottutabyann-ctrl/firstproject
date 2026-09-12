@@ -1,0 +1,11 @@
+- name:  install and configure promotheus and grafana
+  hosts : all
+  remote_user:
+  
+  
+  tasks:
+    - name : install docker 
+      become: yes
+      import_role: 
+          name: "setup/docker"
+  
